@@ -69,10 +69,7 @@
 						<pre><code>result vector = (x1 + x2 , y1 + y2)</code></pre>
 						<p>Lastly, the vector is converted back into magnitude/direction form.</p>
 						<pre><code>magnitude = sqrt(x<sup>2</sup> + y<sup>2</sup>)<br>angle = <a href="https://en.wikipedia.org/wiki/Atan2">atan2</a>(y, x)</code></pre>
-						<p>A JavaScript implementation can be found at <a href="https://github.com/beans42/vec-calc/blob/b5d80232d877210f3bfe068c157fbe48002e6f7c/index.html#L169">line 169</a> of this page.</p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						<p>A JavaScript implementation can be found at <a href="">line 167</a> of this page.</p>
 					</div>
 				</div>
 			</div>
@@ -122,6 +119,8 @@
 			</div>
 		</div>
 
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+
 		<script>
 			const holder_div = document.getElementById("result_div");
 			const needles = holder_div.querySelectorAll("div.needle");
@@ -155,7 +154,6 @@
 				vec_arr.sort((a, b) => {
 					return b.v[0] - a.v[0];
 				});
-				
 				vec_arr.forEach((val, idx, arr) => {
 					const elem = needles[idx];
 					const mag_proportion = 100 - +(val.v[0] / arr[0].v[0] * 100).toFixed(1);
@@ -198,6 +196,5 @@
 				return [ +sum_vec[0].toFixed(2), +sum_vec[1].toFixed(2) ]; //toFixed() returns string and the '+' converts back to Number
 			}
 		</script>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 	</body>
 </html>
