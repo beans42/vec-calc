@@ -166,13 +166,13 @@
 				holder_div.hidden = false;
 			}
 			
-			function vec_add(a_vec, b_vec) { //vec format: [ 60 /*magnitude*/, 45 /*angle, degrees, 0-360*/ ]
-				const d2r = x => x * Math.PI / 180;
+			function vec_add(a_vec, b_vec) { //vec format: [ magnitude, angle in degrees ]
+				const d2r = x => x * Math.PI / 180; //helper functions for conversion between radians and degrees
 				const r2d = x => x * 180 / Math.PI;
-				const cos = x => Math.cos(d2r(x));
+				const cos = x => Math.cos(d2r(x)); //wrap standard math functions (use radians) to use degrees
 				const sin = x => Math.sin(d2r(x));
 				
-				const a_cart = [
+				const a_cart = [ //cartesian format: [ x coordinate, y coordinate ]
 					a_vec[0] * cos(a_vec[1]),
 					a_vec[0] * sin(a_vec[1])
 				];
@@ -192,10 +192,10 @@
 					r2d(Math.atan2(sum_cart[1], sum_cart[0]))
 				];
 				
-				if (sum_vec[1] < 0)
+				if (sum_vec[1] < 0) //if negative angle (bad), make positive by adding 360°
 					sum_vec[1] += 360
 				
-				return [ +sum_vec[0].toFixed(2), +sum_vec[1].toFixed(2) ];
+				return [ +sum_vec[0].toFixed(2), +sum_vec[1].toFixed(2) ]; //toFixed() returns string and the '+' converts back to Number
 			}
 		</script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
