@@ -6,7 +6,7 @@
 		<title>Vector Calculator</title>
 		<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.0.2/dist/darkly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
-		<style>
+		<style> <!-- "all: unset" is to remove properties inherited from bootstrap -->
 			input::-webkit-inner-spin-button,input::-webkit-outer-spin-button {
 				-webkit-appearance: none;
 				margin: 0
@@ -18,42 +18,73 @@
 
 			.clockface {
 				all: unset;
-				width: 100%;
-				padding-top: 100%;
+				width: 50%;
+				padding-top: 50%;
+				margin-left:auto;
+				margin-right:auto;
 				transform: translateY(0);
 				border-style: solid;
 				border-radius: 50%
 			}
 
-			#big,#small {
+			.needle {
 				position: absolute;
 				top: 50%;
 				width: 50%;
 				transform-origin: 100%;
 				height: 6px
 			}
-
-			#big {
-				background-color: #000
-			}
 		</style>
 	</head>
 
-	<body>
-		<nav class="navbar">
+	<body style="padding-top: 72px">
+		<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
 			<div class="container-fluid">
-				<span class="navbar-brand mb-0 h1">Vector Calculator</span>
+				<a class="navbar-brand" href="#">Vector Calculator</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<button type="button" class="btn btn-outline" data-bs-toggle="modal" data-bs-target="#formula">Formula</button>
+						</li>
+					</ul>
+					<a class="btn btn-outline-success" href="https://github.com/beans42/vec-calc" role="button">Source</a>
+				</div>
 			</div>
 		</nav>
+
+		<div class="modal fade" id="formula" tabindex="-1" aria-labelledby="formulaLabel" aria-hidden="true">
+			<div class="modal-dialog modal-fullscreen-md-down">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="formulaLabel">How It Works</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>First, both vectors are converted to cartesian form using the following technique:</p>
+						<pre><code>x = magnitude * cos(angle)<br>y = magnitude * sin(angle)</code></pre>
+						<p>Second, the vectors are summed up.</p>
+						<pre><code>result vector = (x1 + x2 , y1 + y2)</code></pre>
+						<p>Lastly, the vector is converted back into magnitude/direction form.</p>
+						<pre><code>magnitude = sqrt(x<sup>2</sup> + y<sup>2</sup>)<br>angle = <a href="https://en.wikipedia.org/wiki/Atan2">atan2</a>(y, x)</code></pre>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<div class="container">
 			<div>
 				<label>First Vector</label>
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm">
 						<input type="number" inputmode="decimal" class="form-control" id="vec_one_mag" oninput="handle()" placeholder="Magnitude" aria-label="Magnitude">
 					</div>
-					<div class="col-sm-6">
+					<div class="col-sm">
 						<input type="number" inputmode="decimal" class="form-control" id="vec_one_dir" oninput="handle()" placeholder="Direction (degrees)" aria-label="Direction (degrees)">
 					</div>
 				</div>
@@ -61,10 +92,10 @@
 			<div>
 				<label>Second Vector</label>
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm">
 						<input type="number" inputmode="decimal" class="form-control" id="vec_two_mag" oninput="handle()" placeholder="Magnitude" aria-label="Magnitude">
 					</div>
-					<div class="col-sm-6">
+					<div class="col-sm">
 						<input type="number" inputmode="decimal" class="form-control" id="vec_two_dir" oninput="handle()" placeholder="Direction (degrees)" aria-label="Direction (degrees)">
 					</div>
 				</div>
@@ -82,8 +113,9 @@
 				<label>Diagram</label>
 				<div class="row">
 					<div class="clockface">
-						<div id="big"></div>
-						<div id="small"></div>
+						<div class="needle"></div>
+						<div class="needle"></div>
+						<div class="needle"></div>
 					</div>
 				</div>
 			</div>
@@ -91,39 +123,45 @@
 
 		<script>
 			const holder_div = document.getElementById("result_div");
-			const elems = [
+			const needles = holder_div.querySelectorAll("div.needle");
+			const text_boxes = [
 				document.getElementById("vec_one_mag"),
 				document.getElementById("vec_one_dir"),
 				document.getElementById("vec_two_mag"),
 				document.getElementById("vec_two_dir"),
 				document.getElementById("vec_res_mag"),
 				document.getElementById("vec_res_dir"),
-				document.getElementById("big"),
-				document.getElementById("small")
 			];
 			
 			function handle() {
 				for (let i = 0; i < 4; ++i) {
-					if (Number.isNaN(+elems[i].value) || elems[i].value === "") {
+					if (Number.isNaN(+text_boxes[i].value) || text_boxes[i].value === "") {
 						holder_div.hidden = true;
 						return;
 					}
 				}
-				const a_vec = [ +elems[0].value, +elems[1].value ];
-				const b_vec = [ +elems[2].value, +elems[3].value ];
+				const a_vec = [ +text_boxes[0].value, +text_boxes[1].value ];
+				const b_vec = [ +text_boxes[2].value, +text_boxes[3].value ];
 				const res_vec = vec_add(a_vec, b_vec);
-				elems[4].value = res_vec[0];
-				elems[5].value = res_vec[1] + "°";
+				text_boxes[4].value = res_vec[0];
+				text_boxes[5].value = res_vec[1] + "°";
 				
-				let vec_arr = [ a_vec, b_vec ];
+				let vec_arr = [
+					{ v: a_vec, res: false },
+					{ v: b_vec, res: false },
+					{ v: res_vec, res: true }
+				];
 				vec_arr.sort((a, b) => {
-					return b[0] - a[0];
+					return b.v[0] - a.v[0];
 				});
 				
-				elems[6].style.transform = "rotate("+(vec_arr[0][1]+90)+"deg)";
-				elems[7].style.transform = "rotate("+(vec_arr[1][1]+90)+"deg)";
-				const mag_proportion = 100 - +(vec_arr[1][0] / vec_arr[0][0] * 100).toFixed(1);
-				elems[7].style.background = "linear-gradient(to right,rgba(255,0,0,0) 0,rgba(255,0,0,0) "+mag_proportion+"%,#000 "+mag_proportion+"%,#000 100%)";
+				vec_arr.forEach((val, idx, arr) => {
+					const elem = needles[idx];
+					const mag_proportion = 100 - +(val.v[0] / arr[0].v[0] * 100).toFixed(1);
+					const color = val.res ? "#FF0000" : "#FFF";
+					elem.style.transform = "rotate("+(val.v[1]+90)+"deg)";
+					elem.style.background = "linear-gradient(to right,rgba(255,0,0,0) 0,rgba(255,0,0,0) "+mag_proportion+"%,"+color+" "+mag_proportion+"%,"+color+" 100%)";
+				});
 				holder_div.hidden = false;
 			}
 			
@@ -159,5 +197,6 @@
 				return [ +sum_vec[0].toFixed(2), +sum_vec[1].toFixed(2) ];
 			}
 		</script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 	</body>
 </html>
